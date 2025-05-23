@@ -6,9 +6,9 @@ biases = [2,3,0.5]
 
 layer_outputs = []
 
-for input, layer_weights in zip(inputs,weights):
+for bias, layer_weights in zip(biases,weights):
     sum_outputs = 0
-    for weight, bias in zip(layer_weights, biases):
+    for weight, input in zip(layer_weights, inputs):
         sum_outputs += weight*input
     sum_outputs += bias
     layer_outputs.append(sum_outputs)
