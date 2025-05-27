@@ -1,28 +1,30 @@
 import numpy as np
+import nnfs
+from nnfs.datasets import spiral_data
 
-#inputs = [1,2,3,2.5]
-inputs = [[1.0,2.0,3.0,2.5],    # Batch inputs
-          [2.0,5.0,-1.0,2.0],
-          [-1.5,2.7,3.3,-0.8]]
+nnfs.init()
+''' reason for using nnfs.init() method:
+        1. Sets the Random Seed: It initializes NumPy's random number generator with a seed value of 0. 
+        This ensures that any random numbers generated (such as weights and biases) are the same each 
+        time the code is run, aiding in reproducibility.
 
-weights = [[0.2,0.8,-0.5,1],
-           [0.5,-0.91,0.26,-0.5],
-           [-0.26,-0.27,0.17,0.87]]
-biases = [2,3,0.5]
+        2. Configures Default Data Type: The function sets the default data type for NumPy arrays to float32.
+           This is particularly useful in neural network computations, as it standardizes the data type across
+           various operations, potentially improving performance and compatibility.
 
-weights2 = [[0.1,-0.14,0.5],
-            [-0.5,0.12,-0.33],
-            [-0.44,0.73,-0.13]]
-biases2 = [-1,2,-0.5]
+        3. Overrides NumPy's Dot Product: It replaces NumPy's default np.dot function with a version that
+        ensures consistent behavior, especially concerning data types and precision. This modification helps 
+        prevent subtle bugs that can arise from data type mismatches during matrix operations.'''
 
-layer1_outputs = np.dot(np.array(inputs),np.array(weights).T) + biases
-layer2_outputs = np.dot(layer1_outputs,np.array(weights2).T) + biases2
+class Layer_Dense:
+    def __init__(self, n_inputs, n_neurons):
+        self.weights = 0.01 * np.random.randn(n_inputs,n_neurons) # 0.01 is multiplied (small num -> easy calculation)
+        self.biases = np.zeros((1,n_neurons))
 
-#for bias, layer_weights in zip(biases,weights):
-#    sum_outputs = 0
-#    for weight, input in zip(layer_weights, inputs):
-#        sum_outputs += weight*input
-#    sum_outputs += bias
-#    layer_outputs.append(sum_outputs)
+    def forward(self, inputs):
+        self.output = np.dot(inputs,self.weights) + self.biases
 
-print(layer2_outputs)
+X, y = spiral_data(samples=100,classes=3)
+dense1 = Layer_Dense(2,3)
+dense1.forward(X[0:5])
+print(dense1.output)
